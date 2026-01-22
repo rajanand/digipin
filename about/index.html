@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en" class="scrollable-page">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Learn about DigiPIN - India's revolutionary digital addressing system that pinpoints any location with 4x4 meter precision.">
+    <meta name="keywords" content="DigiPIN, Digital Postal Index Number, India Post, How DigiPIN Works">
+    <meta name="author" content="DigiPIN India">
+    <meta name="theme-color" content="#3182ce">
+
+    <title>About DigiPIN - How It Works</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap"
+        rel="stylesheet">
+
+    <!-- App CSS -->
+    <link rel="stylesheet" href="../style.css">
+
+    <!-- Prevent FOUC for theme -->
+    <script>
+        (function () {
+            const theme = localStorage.getItem('digipin-theme') ||
+                (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
+</head>
+
+<body class="scrollable-page">
+    <div class="about-container">
+        <!-- Header -->
+        <header class="about-header">
+            <a href="/" class="back-link">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m12 19-7-7 7-7" />
+                    <path d="M19 12H5" />
+                </svg>
+                Back to DigiPIN
+            </a>
+
+            <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="4" />
+                    <path
+                        d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+                </svg>
+                <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+                </svg>
+            </button>
+        </header>
+
+        <!-- Main Content -->
+        <main class="about-content">
+            <!-- Hero -->
+            <section class="about-hero">
+                <div class="hero-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                        <circle cx="12" cy="10" r="3" />
+                    </svg>
+                </div>
+                <h1>About DigiPIN</h1>
+                <p class="hero-subtitle">Precision Addressing for Every Meter of India</p>
+            </section>
+
+            <!-- What is DigiPIN -->
+            <section class="about-section">
+                <h2>What is DigiPIN?</h2>
+                <p>
+                    <strong>DigiPIN (Digital Postal Index Number)</strong> is a revolutionary geo-coded digital
+                    addressing system
+                    developed by <strong>India Post</strong> in collaboration with <strong>IIT Hyderabad</strong> and
+                    <strong>ISRO's National Remote Sensing Centre (NRSC)</strong>.
+                </p>
+                <p>
+                    Unlike traditional 6-digit PIN codes that cover broad geographical areas, DigiPIN assigns a unique
+                    <strong>10-character alphanumeric code</strong> to every <strong>4×4 meter</strong> grid cell across
+                    India —
+                    covering urban centers, rural villages, remote areas, and even maritime zones.
+                </p>
+
+                <div class="highlight-box">
+                    <div class="highlight-item">
+                        <span class="highlight-value">4×4m</span>
+                        <span class="highlight-label">Grid Precision</span>
+                    </div>
+                    <div class="highlight-item">
+                        <span class="highlight-value">10</span>
+                        <span class="highlight-label">Characters</span>
+                    </div>
+                    <div class="highlight-item">
+                        <span class="highlight-value">100%</span>
+                        <span class="highlight-label">India Coverage</span>
+                    </div>
+                    <div class="highlight-item">
+                        <span class="highlight-value">Open</span>
+                        <span class="highlight-label">Standard</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- How It Works -->
+            <section class="about-section">
+                <h2>How It Works</h2>
+
+                <div class="steps-container">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h3>Hierarchical Grid System</h3>
+                            <p>
+                                India's geographical area (Latitude 2.5°N to 38.5°N, Longitude 63.5°E to 99.5°E) is
+                                divided
+                                into a hierarchical 4×4 grid structure. This 36° × 36° bounding box is recursively
+                                subdivided
+                                <strong>10 times</strong>, creating increasingly smaller cells.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h3>Smart Symbol Set</h3>
+                            <p>
+                                Each of the 16 cells at every level is labeled with one of <strong>16 unique
+                                    symbols</strong>:
+                            </p>
+                            <div class="symbol-grid">
+                                <span>2</span><span>3</span><span>4</span><span>5</span>
+                                <span>6</span><span>7</span><span>8</span><span>9</span>
+                                <span>C</span><span>F</span><span>J</span><span>K</span>
+                                <span>L</span><span>M</span><span>P</span><span>T</span>
+                            </div>
+                            <p class="note">
+                                These characters were carefully chosen to avoid visual confusion (no O/0, I/1, S/5)
+                                and phonetic ambiguity.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h3>Anticlockwise Spiral Pattern</h3>
+                            <p>
+                                Symbols are arranged in an anticlockwise spiral pattern within each 4×4 grid, providing
+                                <strong>directional properties</strong>. This means adjacent DigiPINs often share
+                                similar
+                                starting characters, making them intuitive for navigation.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <h3>Final Code Generation</h3>
+                            <p>
+                                After 10 levels of subdivision, the resulting cell is approximately <strong>3.8m ×
+                                    3.8m</strong>.
+                                The 10 characters from each level are combined to form the DigiPIN, formatted as:
+                            </p>
+                            <div class="digipin-example">
+                                <span class="digipin-char">X</span>
+                                <span class="digipin-char">X</span>
+                                <span class="digipin-char">X</span>
+                                <span class="digipin-sep">-</span>
+                                <span class="digipin-char">X</span>
+                                <span class="digipin-char">X</span>
+                                <span class="digipin-char">X</span>
+                                <span class="digipin-sep">-</span>
+                                <span class="digipin-char">X</span>
+                                <span class="digipin-char">X</span>
+                                <span class="digipin-char">X</span>
+                                <span class="digipin-char">X</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Key Features -->
+            <section class="about-section">
+                <h2>Key Features</h2>
+
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10" />
+                                <path d="m16 10-4 4-4-4" />
+                            </svg>
+                        </div>
+                        <h3>Offline Capable</h3>
+                        <p>DigiPIN can be generated and decoded without internet connectivity — it's pure mathematics.
+                        </p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                            </svg>
+                        </div>
+                        <h3>Privacy First</h3>
+                        <p>No personal data is stored. DigiPIN only encodes geographical coordinates.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                            </svg>
+                        </div>
+                        <h3>Permanent</h3>
+                        <p>DigiPINs are based on coordinates, not addresses. They never change, even if buildings do.
+                        </p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                                <polyline points="15 3 21 3 21 9" />
+                                <line x1="10" y1="14" x2="21" y2="3" />
+                            </svg>
+                        </div>
+                        <h3>Open Source</h3>
+                        <p>The algorithm is publicly available. Anyone can implement it in their systems.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Use Cases -->
+            <section class="about-section">
+                <h2>Use Cases</h2>
+                <ul class="use-cases-list">
+                    <li>
+                        <strong>Emergency Services:</strong> Ambulances, fire brigades, and police can locate victims
+                        with pinpoint accuracy.
+                    </li>
+                    <li>
+                        <strong>E-Commerce & Logistics:</strong> Last-mile delivery becomes precise, reducing failed
+                        deliveries and improving customer experience.
+                    </li>
+                    <li>
+                        <strong>Rural Addressing:</strong> Millions of homes without formal addresses can now be
+                        located.
+                    </li>
+                    <li>
+                        <strong>Drone Deliveries:</strong> Autonomous vehicles and drones can navigate to exact landing
+                        spots.
+                    </li>
+                    <li>
+                        <strong>Government Services:</strong> Census, welfare schemes, and infrastructure planning
+                        benefit
+                        from precise location data.
+                    </li>
+                </ul>
+            </section>
+
+            <!-- Open Standard -->
+            <section class="about-section">
+                <h2>Open Standard by India Post</h2>
+                <p>
+                    DigiPIN is an <strong>open standard</strong> released by the Government of India through India Post.
+                    The algorithm and reference implementations are freely available for developers, businesses, and
+                    government agencies to integrate into their systems.
+                </p>
+                <div class="links-box">
+                    <a href="https://github.com/INDIAPOST-gov/digipin" target="_blank" rel="noopener"
+                        class="resource-link">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path
+                                d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
+                            <path d="M9 18c-4.51 2-5-2-7-2" />
+                        </svg>
+                        GitHub Repository
+                    </a>
+                    <a href="https://www.indiapost.gov.in/" target="_blank" rel="noopener" class="resource-link">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10" />
+                            <line x1="2" y1="12" x2="22" y2="12" />
+                            <path
+                                d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                        </svg>
+                        India Post Official
+                    </a>
+                    <a href="https://dac.indiapost.gov.in/mydigipin/home" target="_blank" rel="noopener"
+                        class="resource-link">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                            <circle cx="12" cy="10" r="3" />
+                        </svg>
+                        Official DigiPIN Portal
+                    </a>
+                </div>
+            </section>
+
+            <!-- CTA -->
+            <section class="about-cta">
+                <a href="index.html" class="btn btn-primary btn-large">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                        <circle cx="12" cy="10" r="3" />
+                    </svg>
+                    Find Your DigiPIN
+                </a>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="about-footer">
+            <p>This is an unofficial tool. DigiPIN is a standard by India Post.</p>
+        </footer>
+    </div>
+
+    <!-- Theme Toggle Script -->
+    <script>
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            const theme = document.documentElement.getAttribute('data-theme');
+            const newTheme = theme === 'dark' ? 'light' : 'dark';
+
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('digipin-theme', newTheme);
+
+            const sunIcon = document.querySelector('.sun-icon');
+            const moonIcon = document.querySelector('.moon-icon');
+
+            if (newTheme === 'dark') {
+                sunIcon.style.display = 'block';
+                moonIcon.style.display = 'none';
+            } else {
+                sunIcon.style.display = 'none';
+                moonIcon.style.display = 'block';
+            }
+        });
+
+        // Initialize theme icons
+        const theme = document.documentElement.getAttribute('data-theme');
+        const sunIcon = document.querySelector('.sun-icon');
+        const moonIcon = document.querySelector('.moon-icon');
+        if (theme === 'dark') {
+            sunIcon.style.display = 'block';
+            moonIcon.style.display = 'none';
+        } else {
+            sunIcon.style.display = 'none';
+            moonIcon.style.display = 'block';
+        }
+    </script>
+</body>
+
+</html>

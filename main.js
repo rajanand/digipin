@@ -6,6 +6,11 @@
 import { encodeDigipin, decodeDigipin, isValidDigipin, formatDigipin, isWithinBounds, INDIA_BOUNDS } from './digipin.js';
 
 // ========================================
+// Constants
+// ========================================
+const DEFAULT_DIGIPIN = '4P3-JM8-K4L6'; // Default location if geolocation fails
+
+// ========================================
 // Global State
 // ========================================
 let map = null;
@@ -30,7 +35,7 @@ function initTheme() {
         localStorage.setItem('digipin-theme', newTheme);
         updateThemeIcons(newTheme);
 
-        // Update map tiles if needed
+        // Update map tiles
         updateMapTiles(newTheme);
     });
 }
@@ -64,7 +69,7 @@ function updateMapTiles(theme) {
         : 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
 
     L.tileLayer(tileUrl, {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
         subdomains: 'abcd',
         maxZoom: 20
     }).addTo(map);
@@ -82,7 +87,7 @@ function initMap() {
         zoom: 5,
         minZoom: 4,
         maxZoom: 19,
-        zoomControl: false // We'll use custom controls
+        zoomControl: false
     });
 
     // Add tile layer based on theme
@@ -143,7 +148,7 @@ function setLocation(lat, lon, zoom = null, updateUrl = true) {
     }
 
     // Update UI
-    updateResultPanel(digipin, lat, lon);
+    updateResultSection(digipin, lat, lon);
 
     // Update URL
     if (updateUrl) {
@@ -165,74 +170,91 @@ function drawGridCell(lat, lon) {
         [bounds.minLat, bounds.minLon],
         [bounds.maxLat, bounds.maxLon]
     ], {
+        className: 'grid-cell',
         color: getComputedStyle(document.documentElement).getPropertyValue('--accent-primary').trim(),
         weight: 2,
         fillOpacity: 0.2,
-        dashArray: '5, 5'
+        dashArray: '6, 4'
     }).addTo(map);
 }
 
 // ========================================
-// Result Panel
+// Result Section in Sidebar
 // ========================================
-function updateResultPanel(digipin, lat, lon) {
+function updateResultSection(digipin, lat, lon) {
     document.getElementById('digipinValue').textContent = digipin;
     document.getElementById('latValue').textContent = lat.toFixed(6);
     document.getElementById('lonValue').textContent = lon.toFixed(6);
 
-    // Show panel
-    document.getElementById('resultPanel').classList.add('visible');
+    // Activate result section
+    document.getElementById('resultSection').classList.add('active');
 }
 
-function hideResultPanel() {
-    document.getElementById('resultPanel').classList.remove('visible');
-
-    // Clear marker and grid
-    if (marker) {
-        map.removeLayer(marker);
-        marker = null;
-    }
-    if (gridRect) {
-        map.removeLayer(gridRect);
-        gridRect = null;
-    }
-
-    currentLocation = { lat: null, lon: null, digipin: null };
-
-    // Clear URL params
-    history.replaceState(null, '', window.location.pathname);
-}
-
-function initResultPanel() {
-    document.getElementById('closePanelBtn').addEventListener('click', hideResultPanel);
-
+function initResultSection() {
     // Copy button
-    document.getElementById('copyBtn').addEventListener('click', () => {
+    document.getElementById('copyBtn').addEventListener('click', async () => {
         if (currentLocation.digipin) {
-            navigator.clipboard.writeText(currentLocation.digipin).then(() => {
+            try {
+                await navigator.clipboard.writeText(currentLocation.digipin);
+
+                const copyIcon = document.querySelector('#copyBtn .copy-icon');
+                const checkIcon = document.querySelector('#copyBtn .check-icon');
                 const btn = document.getElementById('copyBtn');
+
+                // Show check icon
+                copyIcon.style.display = 'none';
+                checkIcon.style.display = 'block';
                 btn.classList.add('copied');
+
                 showToast('DigiPIN copied to clipboard!', 'success');
-                setTimeout(() => btn.classList.remove('copied'), 2000);
-            });
+
+                // Reset after 2 seconds
+                setTimeout(() => {
+                    copyIcon.style.display = 'block';
+                    checkIcon.style.display = 'none';
+                    btn.classList.remove('copied');
+                }, 2000);
+            } catch (err) {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = currentLocation.digipin;
+                textArea.style.position = 'fixed';
+                textArea.style.left = '-999999px';
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    showToast('DigiPIN copied to clipboard!', 'success');
+                } catch (e) {
+                    showToast('Failed to copy. Please copy manually.', 'error');
+                }
+                document.body.removeChild(textArea);
+            }
         }
     });
 
     // Share button
-    document.getElementById('shareBtn').addEventListener('click', () => {
+    document.getElementById('shareBtn').addEventListener('click', async () => {
         if (currentLocation.digipin) {
             const url = `${window.location.origin}${window.location.pathname}?pin=${currentLocation.digipin}`;
 
             if (navigator.share) {
-                navigator.share({
-                    title: 'DigiPIN Location',
-                    text: `My DigiPIN is ${currentLocation.digipin}`,
-                    url: url
-                });
+                try {
+                    await navigator.share({
+                        title: 'DigiPIN Location',
+                        text: `My DigiPIN is ${currentLocation.digipin}`,
+                        url: url
+                    });
+                } catch (err) {
+                    // User cancelled or error
+                    if (err.name !== 'AbortError') {
+                        await copyToClipboard(url);
+                        showToast('Share link copied to clipboard!', 'success');
+                    }
+                }
             } else {
-                navigator.clipboard.writeText(url).then(() => {
-                    showToast('Share link copied to clipboard!', 'success');
-                });
+                await copyToClipboard(url);
+                showToast('Share link copied to clipboard!', 'success');
             }
         }
     });
@@ -245,6 +267,21 @@ function initResultPanel() {
     });
 }
 
+async function copyToClipboard(text) {
+    try {
+        await navigator.clipboard.writeText(text);
+    } catch (err) {
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-999999px';
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+    }
+}
+
 // ========================================
 // Search Functionality
 // ========================================
@@ -252,12 +289,24 @@ function initSearch() {
     const searchInput = document.getElementById('searchInput');
     const searchBtn = document.getElementById('searchBtn');
     const locateBtn = document.getElementById('locateBtn');
+    const clearBtn = document.getElementById('clearBtn');
 
     searchBtn.addEventListener('click', handleSearch);
     searchInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') handleSearch();
     });
     locateBtn.addEventListener('click', locateUser);
+
+    // Clear button functionality
+    searchInput.addEventListener('input', () => {
+        clearBtn.style.display = searchInput.value.length > 0 ? 'flex' : 'none';
+    });
+
+    clearBtn.addEventListener('click', () => {
+        searchInput.value = '';
+        clearBtn.style.display = 'none';
+        searchInput.focus();
+    });
 }
 
 async function handleSearch() {
@@ -274,6 +323,9 @@ async function handleSearch() {
         if (decoded) {
             setLocation(decoded.lat, decoded.lon, 18);
             showToast('DigiPIN located!', 'success');
+
+            // Close sidebar on mobile
+            closeSidebarOnMobile();
             return;
         }
     }
@@ -288,6 +340,9 @@ async function handleSearch() {
             const { lat, lon } = data[0];
             setLocation(parseFloat(lat), parseFloat(lon), 16);
             showToast(`Found: ${data[0].display_name.split(',')[0]}`, 'success');
+
+            // Close sidebar on mobile
+            closeSidebarOnMobile();
         } else {
             showToast('Location not found. Try a different search.', 'error');
         }
@@ -316,6 +371,9 @@ function locateUser() {
 
             setLocation(latitude, longitude, 18);
             showToast('Location found!', 'success');
+
+            // Close sidebar on mobile
+            closeSidebarOnMobile();
         },
         (error) => {
             console.error('Geolocation error:', error);
@@ -323,6 +381,57 @@ function locateUser() {
         },
         { enableHighAccuracy: true, timeout: 10000 }
     );
+}
+
+// ========================================
+// Initial Location (Geolocation or Default)
+// ========================================
+function initDefaultLocation() {
+    // Check if there are URL params - if so, let URL handler deal with it
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('pin') || params.get('lat') || params.get('q')) {
+        return; // URL handler will set the location
+    }
+
+    // Try to get user's location
+    if (navigator.geolocation) {
+        // Show prompt toast immediately
+        showToast('Requesting location access...', 'success');
+
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const { latitude, longitude } = position.coords;
+
+                if (isWithinBounds(latitude, longitude)) {
+                    setLocation(latitude, longitude, 15);
+                    showToast('Showing your current location', 'success');
+                } else {
+                    // User is outside India, show default
+                    showDefaultLocation();
+                    showToast('You are outside India. Showing default location.', 'error');
+                }
+            },
+            (error) => {
+                console.log('Geolocation denied or failed, showing default location');
+                showDefaultLocation();
+                if (error.code === error.PERMISSION_DENIED) {
+                    showToast('Location permission denied. Using default.', 'error');
+                } else {
+                    showToast('Location check failed. Using default.', 'error');
+                }
+            },
+            { enableHighAccuracy: true, timeout: 8000 }
+        );
+    } else {
+        showDefaultLocation();
+    }
+}
+
+function showDefaultLocation() {
+    const decoded = decodeDigipin(DEFAULT_DIGIPIN);
+    if (decoded) {
+        setLocation(decoded.lat, decoded.lon, 15, false);
+    }
 }
 
 // ========================================
@@ -337,7 +446,7 @@ function initUrlHandler() {
         const decoded = decodeDigipin(pin);
         if (decoded) {
             setTimeout(() => setLocation(decoded.lat, decoded.lon, 18, false), 500);
-            return;
+            return true;
         }
     }
 
@@ -346,7 +455,7 @@ function initUrlHandler() {
     const lon = parseFloat(params.get('lng') || params.get('lon'));
     if (!isNaN(lat) && !isNaN(lon) && isWithinBounds(lat, lon)) {
         setTimeout(() => setLocation(lat, lon, 18, false), 500);
-        return;
+        return true;
     }
 
     // Handle ?q=address
@@ -354,7 +463,10 @@ function initUrlHandler() {
     if (query) {
         document.getElementById('searchInput').value = query;
         setTimeout(handleSearch, 500);
+        return true;
     }
+
+    return false;
 }
 
 function updateUrlState(type, value) {
@@ -372,6 +484,33 @@ function updateUrlState(type, value) {
     }
 
     history.replaceState(null, '', url.toString());
+}
+
+// ========================================
+// Mobile Sidebar Toggle
+// ========================================
+function initSidebarToggle() {
+    const sidebar = document.getElementById('sidebar');
+    const toggle = document.getElementById('sidebarToggle');
+
+    if (toggle) {
+        toggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+        });
+    }
+
+    // Close sidebar when clicking on map (mobile)
+    document.getElementById('map').addEventListener('click', () => {
+        if (window.innerWidth <= 768) {
+            sidebar.classList.remove('open');
+        }
+    });
+}
+
+function closeSidebarOnMobile() {
+    if (window.innerWidth <= 768) {
+        document.getElementById('sidebar').classList.remove('open');
+    }
 }
 
 // ========================================
@@ -398,6 +537,13 @@ document.addEventListener('DOMContentLoaded', () => {
     initTheme();
     initMap();
     initSearch();
-    initResultPanel();
-    initUrlHandler();
+    initResultSection();
+    initSidebarToggle();
+
+    // Handle URL params first, then default location
+    const hasUrlParams = initUrlHandler();
+    if (!hasUrlParams) {
+        // Small delay to let the map initialize
+        setTimeout(initDefaultLocation, 1000);
+    }
 });
